@@ -1,62 +1,21 @@
 <?php
 
-// Abstract class Employee
-abstract class Employee
+require_once 'Person.php';
+
+abstract class Employee extends Person
 {
-    // Static array to store employee instances
-    private static $employeeList = [];
+    private $company;
 
-    protected $name;
-    protected $age;
-    protected $department;
-
-    public function __construct($name, $age, $department)
+    public function __construct($name, $address, $age, $company)
     {
-        $this->name = $name;
-        $this->age = $age;
-        $this->department = $department;
-        self::$employeeList[] = $this; // Add instance to the static list
+        parent::__construct($name, $address, $age);
+        $this->company = $company;
     }
 
-    // Abstract method to be implemented by subclasses
-    abstract public function work();
+    abstract public function earning();
 
-    // Method to get employee details as a string
     public function __toString()
     {
-        return "Name: {$this->name}, Age: {$this->age}, Department: {$this->department}" . PHP_EOL;
-    }
-
-    // Static method to print all stored employees
-    public static function printAllEmployees()
-    {
-        foreach (self::$employeeList as $employee) {
-            echo $employee . PHP_EOL;
-            echo "Work: " . $employee->work() . PHP_EOL;
-        }
+        return parent::__toString() . ", Company: {$this->company}, Earnings: " . number_format($this->earning(), 2);
     }
 }
-
-// Subclass Manager extends Employee
-class Manager extends Employee
-{
-    public function work()
-    {
-        return "Managing the team and overseeing projects.";
-    }
-}
-
-// Subclass Developer extends Employee
-class Developer extends Employee
-{
-    public function work()
-    {
-        return "Writing code and debugging.";
-    }
-}
-
-// Menu class to handle user interaction
-
-
-// Run the Menu
-
