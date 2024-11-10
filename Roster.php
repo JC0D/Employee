@@ -4,15 +4,13 @@ require_once 'Employee.php';
 class Roster
 {
     private $employee = [];
-
-    public function getEmployees(): array
+    public function getEmployees()
     {
         return $this->employee;
     }
     public function addEmployee(Employee $employee)
     {
-        $this->employee[] = $employee;
-        echo "Employee Added!";
+        return $this->employee[] = $employee;
     }
 
     public function count()
@@ -28,12 +26,12 @@ class Roster
             echo "Employee removed at index: $index\n";
             return true;
         } else {
-            echo "Invalid index: $index\n"; // Handle invalid index
+            echo "Invalid index: $index\n";
             return false;
         }
     }
 
-    public function countEmployee(string $type = ""): int
+    public function countEmployee(string $type = "")
     {
         if ($type === "") {
             return count($this->employee);
@@ -48,23 +46,23 @@ class Roster
         return $count;
     }
 
-    public function displayAllEmployee(): void
+    public function displayAllEmployee()
     {
         if (empty($this->employee)) {
             echo "No employees in the roster.\n";
         } else {
             foreach ($this->employee as $index => $employee) {
-                echo "Index $index: " . $employee . "\n";
+                echo "Index $index: " . $employee . "\n\n";
             }
         }
     }
 
-    public function displayCommissionEmployee(): void
+    public function displayCommissionEmployee()
     {
         $found = false;
         foreach ($this->employee as $index => $employee) {
             if ($employee instanceof CommissionEmployee) {
-                echo "Index $index: " . $employee . "\n";
+                echo "Index $index: " . $employee . "\n\n";
                 $found = true;
             }
         }
@@ -73,12 +71,12 @@ class Roster
         }
     }
 
-    public function displayHourlyEmployee(): void
+    public function displayHourlyEmployee()
     {
         $found = false;
         foreach ($this->employee as $index => $employee) {
             if ($employee instanceof HourlyEmployee) {
-                echo "Index $index: " . $employee . "\n";
+                echo "Index $index: " . $employee . "\n\n";
                 $found = true;
             }
         }
@@ -87,12 +85,12 @@ class Roster
         }
     }
 
-    public function displayPieceWorker(): void
+    public function displayPieceWorker()
     {
         $found = false;
         foreach ($this->employee as $index => $employee) {
             if ($employee instanceof PieceWorker) {
-                echo "Index $index: " . $employee . "\n";
+                echo "Index $index: " . $employee . "\n\n";
                 $found = true;
             }
         }
@@ -101,13 +99,37 @@ class Roster
         }
     }
 
+    public function countAllEmployees()
+    {
+        $count = $this->countEmployee();
+        echo "Total Employees: $count\n";
+    }
+
+    public function countCommissionEmployees()
+    {
+        $count = $this->countEmployee("CommissionEmployee");
+        echo "Total Commission Employees: $count\n";
+    }
+
+    public function countHourlyEmployees()
+    {
+        $count = $this->countEmployee("HourlyEmployee");
+        echo "Total Hourly Employees: $count\n";
+    }
+
+    public function countPieceWorkers()
+    {
+        $count = $this->countEmployee("PieceWorker");
+        echo "Total Piece Workers: $count\n";
+    }
+
     public function displayAllPayrolls()
     {
         if ($this->countEmployee() == 0) {
             echo "No employees in the roster.\n";
         } else {
             foreach ($this->getEmployees() as $index => $employee) {
-                echo "Employee $index: " . $employee->getName() . " - Earnings: " . $employee->earnings() . "\n";
+                echo "\nEmployee $index: " . $employee->__toString() . "\n\n";
             }
         }
     }
