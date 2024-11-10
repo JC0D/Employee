@@ -14,11 +14,11 @@ class Person
     }
     public function getName($name)
     {
-        $this->name = $name;
+        return $this->name = $name;
     }
 
     public function __toString()
     {
-        return "Name: {$this->name}, Address: {$this->address}, Age: {$this->age}";
+        return "\nName: {$this->name}\n Address: {$this->address}\n Age: {$this->age}";
     }
 }
