@@ -16,6 +16,6 @@ abstract class Employee extends Person
 
     public function __toString()
     {
-        return parent::__toString() . ", Company: {$this->company}, Earnings: " . number_format($this->earning(), 2);
+        return parent::__toString() . "\n Company: {$this->company} \nEarnings: " . number_format($this->earning(), 2);
     }
 }
