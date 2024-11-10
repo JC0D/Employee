@@ -18,11 +18,13 @@ class Main
 
     public function clear()
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            system('cls');  // Windows
-        } else {
-            system('clear');  // Unix/Linux/MacOS
-        }
+        pclose(popen("cls", "w"));
+    }
+
+    public function startMenu()
+    {
+        $this->size = $this->getRosterSize();
+        $this->display();
     }
 
     public function getRosterSize()
@@ -30,23 +32,17 @@ class Main
         while (true) {
             $size = readline("Enter the size of the roster: ");
             if (is_numeric($size) && $size > 0) {
-                return (int) $size;
+                return $size;
             } else {
                 echo "Invalid input. Please enter a positive number.\n";
             }
         }
     }
 
-    public function startMenu()
-    {
-        $this->size = $this->getRosterSize();
-
-        $this->display();
-    }
-
     public function display()
     {
         while ($this->repeat) {
+            $this->clear();
             echo "Current Roster Size: {$this->size}\n";
             echo "[1] Add Employee\n";
             echo "[2] Delete Employee\n";
@@ -56,11 +52,14 @@ class Main
 
             switch ($choice) {
                 case 1:
-                    return $this->addMenu();
+                    $this->addMenu();
+                    break;
                 case 2:
-                    return $this->deleteMenu();
+                    $this->deleteMenu();
+                    break;
                 case 3:
-                    return $this->otherMenu();
+                    $this->otherMenu();
+                    break;
                 case 0:
                     $this->exitProgram();
                     break;
@@ -68,6 +67,7 @@ class Main
                     echo "Invalid input. Please try again.\n";
                     readline("Press \"Enter\" key to continue...");
                     $this->display();
+                    break;
             }
         }
     }
@@ -80,54 +80,39 @@ class Main
 
     public function addMenu()
     {
-        $validInput = false;  // Flag to track if the input is valid
+        $validInput = false;
 
         while (!$validInput) {
+            $this->clear();
             $name = readline("Enter name: ");
             $address = readline("Enter address: ");
             $age = readline("Enter age: ");
             $company = readline("Enter company name: ");
-
-            // Assuming age is an integer, and it should be a positive number
             if (!is_numeric($age) || $age <= 0) {
                 echo "Invalid age. Please enter a valid number greater than zero.\n";
-                continue; // Prompt the user again
+                continue;
             }
-
             $this->employeeType($name, $address, $age, $company);
-            $validInput = true;  // If input is valid, exit the loop
+            $validInput = true;
         }
 
-        $this->repeat();
+        $this->addMore();
     }
 
     public function deleteMenu()
     {
         $this->clear();
         echo "Delete Employee Menu:\n";
-
-        // Display all employees for reference
         $this->roster->displayAllEmployee();
-
-        // Prompt user to enter the index of the employee they want to delete
-        $index = (int)readline("Enter the index of the employee you want to delete: ");
-
-        // Call the Roster class method to delete the employee
-        $success = $this->roster->removeEmployee($index);
-
-        if ($success) {
-            echo "Employee at index $index has been removed successfully.\n";
-        } else {
-            echo "Failed to remove employee. Invalid index.\n";
-        }
-
+        $index = readline("Enter the index of the employee you want to delete: ");
+        $this->roster->removeEmployee($index);
         readline("Press \"Enter\" key to continue...");
-        $this->deleteMenu();
+        $this->display();
     }
 
     public function employeeType($name, $address, $age, $company)
     {
-        $validInput = false;  // Flag to track if the input is valid
+        $validInput = false;
 
         while (!$validInput) {
             $employeeType = readline("[1] Commission Employee     [2] Hourly Employee     [3] Piece Worker: ");
@@ -135,19 +120,18 @@ class Main
             switch ($employeeType) {
                 case 1:
                     $this->addOnCommissionEmployee($name, $address, $age, $company);
-                    $validInput = true;  // Exit the loop
+                    $validInput = true;
                     break;
                 case 2:
                     $this->addOnHourlyEmployee($name, $address, $age, $company);
-                    $validInput = true;  // Exit the loop
+                    $validInput = true;
                     break;
                 case 3:
                     $this->addOnPieceWorker($name, $address, $age, $company);
-                    $validInput = true;  // Exit the loop
+                    $validInput = true;
                     break;
                 default:
                     echo "Invalid input. Please try again.\n";
-                    // Continue prompting the user until they provide a valid choice
             }
         }
     }
@@ -158,7 +142,7 @@ class Main
         $commissionRate = readline("Enter commission (%): ");
         $employee = new CommissionEmployee($name, $address, $age, $company, $salary, $totalSales, $commissionRate);
         $this->roster->addEmployee($employee);
-        $this->repeat();
+        $this->addMore();
     }
 
     public function addOnHourlyEmployee($name, $address, $age, $company)
@@ -167,7 +151,7 @@ class Main
         $hourlyRate = readline("Enter hourly rate: ");
         $employee = new HourlyEmployee($name, $address, $age, $company, $hoursWorked, $hourlyRate);
         $this->roster->addEmployee($employee);
-        $this->repeat();
+        $this->addMore();
     }
 
     public function addOnPieceWorker($name, $address, $age, $company)
@@ -176,10 +160,10 @@ class Main
         $wagePerPiece = readline("Enter wage per items: ");
         $employee = new PieceWorker($name, $address, $age, $company, $pieceProduced, $wagePerPiece);
         $this->roster->addEmployee($employee);
-        $this->repeat();
+        $this->addMore();
     }
 
-    public function repeat()
+    public function addMore()
     {
         echo "Employee Added!\n";
         if ($this->roster->count() < $this->size) {
@@ -199,119 +183,119 @@ class Main
     public function otherMenu()
     {
         $this->clear();
-        echo "[1] Display";
-        echo "[2] Count";
-        echo "[3] Payroll";
-        echo "[0] Exit";
+        echo "[1] Display\n";
+        echo "[2] Count\n";
+        echo "[3] Payroll\n";
+        echo "[0] Exit\n";
         $choice = readline("Select Menu: ");
 
         switch ($choice) {
             case 1:
-                return $this->displayMenu();
+                $this->displayMenu();
+                break;
             case 2:
-                return $this->countMenu();
+                $this->countMenu();
+                break;
             case 3:
-                return $this->payrollMenu();
+                $this->payrollMenu();
+                break;
             case 0:
-                return $this->display();
+                $this->display();
+                break;
             default:
                 echo "Invalid input. Please try again.\n";
                 readline("Press \"Enter\" key to continue...");
                 $this->otherMenu();
+                break;
         }
     }
 
     public function displayMenu()
     {
         $this->clear();
-        echo "[1] Display All Employee";
-        echo "[2] Display Commission Employee";
-        echo "[3] Display Hourly Employee";
-        echo "[4] Display Piece Worker";
-        echo "[0] Return";
+        echo "[1] Display All Employee\n";
+        echo "[2] Display Commission Employee\n";
+        echo "[3] Display Hourly Employee\n";
+        echo "[4] Display Piece Worker\n";
+        echo "[0] Return\n";
         $displayChoice = readline("Select Menu: ");
         switch ($displayChoice) {
             case 1:
-                return $this->roster->displayAllEmployee();
+                $this->roster->displayAllEmployee();
+                readline("Press \"Enter\" key to continue...");
+                $this->displayMenu();
+                break;
             case 2:
-                return $this->roster->displayCommissionEmployee();
+                $this->roster->displayCommissionEmployee();
+                readline("Press \"Enter\" key to continue...");
+                $this->displayMenu();
+                break;
             case 3:
-                return $this->roster->displayHourlyEmployee();
+                $this->roster->displayHourlyEmployee();
+                readline("Press \"Enter\" key to continue...");
+                $this->displayMenu();
+                break;
             case 4:
-                return $this->roster->displayPieceWorker();
+                $this->roster->displayPieceWorker();
+                readline("Press \"Enter\" key to continue...");
+                $this->displayMenu();
+                break;
             case 0:
-                return $this->otherMenu();
+                $this->otherMenu();
+                break;
             default:
                 echo "Invalid input. Please try again.\n";
                 readline("Press \"Enter\" key to continue...");
                 $this->displayMenu();
+                break;
         }
     }
 
     public function countMenu()
     {
         $this->clear();
-        echo "[1] Count All Employee";
-        echo "[2] Count Commission Employee";
-        echo "[3] Count Hourly Employee";
-        echo "[4] Count Piece Worker";
-        echo "[0] Return";
+        echo "[1] Count All Employee\n";
+        echo "[2] Count Commission Employee\n";
+        echo "[3] Count Hourly Employee\n";
+        echo "[4] Count Piece Worker\n";
+        echo "[0] Return\n";
         $countChoice = readline("Select Menu: ");
         switch ($countChoice) {
             case 1:
-                return $this->countAllEmployees();
+                $this->roster->countAllEmployees();
+                readline("Press \"Enter\" key to continue...");
+                $this->countMenu();
+                break;
             case 2:
-                return $this->countCommissionEmployees();
+                $this->roster->countCommissionEmployees();
+                readline("Press \"Enter\" key to continue...");
+                $this->countMenu();
+                break;
             case 3:
-                return $this->countHourlyEmployees();
+                $this->roster->countHourlyEmployees();
+                readline("Press \"Enter\" key to continue...");
+                $this->countMenu();
+                break;
             case 4:
-                return $this->countPieceWorkers();
+                $this->roster->countPieceWorkers();
+                readline("Press \"Enter\" key to continue...");
+                $this->countMenu();
+                break;
             case 0:
                 return $this->otherMenu();
             default:
                 echo "Invalid input. Please try again.\n";
                 readline("Press \"Enter\" key to continue...");
                 $this->countMenu();
+                break;
         }
-    }
-
-    public function countAllEmployees()
-    {
-        $count = $this->roster->countEmployee();
-        echo "Total Employees: $count\n";
-    }
-
-    public function countCommissionEmployees()
-    {
-        $count = $this->roster->countEmployee("CommissionEmployee");
-        echo "Total Commission Employees: $count\n";
-    }
-
-    public function countHourlyEmployees()
-    {
-        $count = $this->roster->countEmployee("HourlyEmployee");
-        echo "Total Hourly Employees: $count\n";
-    }
-
-    public function countPieceWorkers()
-    {
-        $count = $this->roster->countEmployee("PieceWorker");
-        echo "Total Piece Workers: $count\n";
     }
 
     public function payrollMenu()
     {
         echo "Payroll Menu\n";
-
-        if (empty($this->employee)) {
-            echo "No employees to display.\n";
-            return;
-        }
-
-        foreach ($this->roster->getEmployees() as $index => $emp) {
-            // Assuming $emp is either a PieceWorker or HourlyEmployee object
-            echo "Employee: " . $emp->getName() . "\n";
-            echo "Earnings: " . $emp->earning() . "\n";  // Call the earnings method for each employee
-        }
+        $this->roster->displayAllPayrolls();
+        readline("Press \"Enter\" key to continue...");
+        $this->otherMenu();
     }
 }
