@@ -20,14 +20,32 @@ class Roster
 
     public function removeEmployee($index)
     {
-        // Check if the index is valid
         if (isset($this->employee[$index])) {
-            unset($this->employee[$index]); // Unset the employee at the specified index
+            unset($this->employee[$index]);
+            $this->employee = array_values($this->employee);
             echo "Employee removed at index: $index\n";
             return true;
         } else {
             echo "Invalid index: $index\n";
             return false;
+        }
+    }
+
+    private function displayEmployeesByType($type)
+    {
+        $found = false;
+        foreach ($this->employee as $index => $employee) {
+            if ($employee instanceof $type) {
+                echo "Employee: #$index\n";
+                echo "Name: " . $employee->getName() . "\n";
+                echo "Age: " . $employee->getAge() . "\n";
+                echo "Company: " . $employee->getCompany() . "\n";
+                echo "Type: " . get_class($employee) . "\n\n";
+                $found = true;
+            }
+            if (!$found) {
+                echo "No employees of type $type found.\n";
+            }
         }
     }
 
@@ -52,75 +70,48 @@ class Roster
             echo "No employees in the roster.\n";
         } else {
             foreach ($this->employee as $index => $employee) {
-                echo "Index $index: " . $employee . "\n\n";
+                echo "Employee #$index\n";
+                echo "Name: " . $employee->getName() . "\n";
+                echo "Age: " . $employee->getAge() . "\n";
+                echo "Company: " . $employee->getCompany() . "\n";
+                echo "Type: " . get_class($employee) . "\n\n";
             }
         }
     }
 
     public function displayCommissionEmployee()
     {
-        $found = false;
-        foreach ($this->employee as $index => $employee) {
-            if ($employee instanceof CommissionEmployee) {
-                echo "Index $index: " . $employee . "\n\n";
-                $found = true;
-            }
-        }
-        if (!$found) {
-            echo "No Commission Employees found.\n";
-        }
+        $this->displayEmployeesByType(CommissionEmployee::class);
     }
 
     public function displayHourlyEmployee()
     {
-        $found = false;
-        foreach ($this->employee as $index => $employee) {
-            if ($employee instanceof HourlyEmployee) {
-                echo "Index $index: " . $employee . "\n\n";
-                $found = true;
-            }
-        }
-        if (!$found) {
-            echo "No Hourly Employees found.\n";
-        }
+        $this->displayEmployeesByType(HourlyEmployee::class);
     }
 
     public function displayPieceWorker()
     {
-        $found = false;
-        foreach ($this->employee as $index => $employee) {
-            if ($employee instanceof PieceWorker) {
-                echo "Index $index: " . $employee . "\n\n";
-                $found = true;
-            }
-        }
-        if (!$found) {
-            echo "No Piece Workers found.\n";
-        }
+        $this->displayEmployeesByType(PieceWorker::class);
     }
 
     public function countAllEmployees()
     {
-        $count = $this->countEmployee();
-        echo "Total Employees: $count\n";
+        echo "Total Employees: " . $this->countEmployee() . "\n";
     }
 
     public function countCommissionEmployees()
     {
-        $count = $this->countEmployee("CommissionEmployee");
-        echo "Total Commission Employees: $count\n";
+        echo "Total Commission Employees: " . $this->countEmployee(CommissionEmployee::class) . "\n";
     }
 
     public function countHourlyEmployees()
     {
-        $count = $this->countEmployee("HourlyEmployee");
-        echo "Total Hourly Employees: $count\n";
+        echo "Total Hourly Employees: " . $this->countEmployee(HourlyEmployee::class) . "\n";
     }
 
     public function countPieceWorkers()
     {
-        $count = $this->countEmployee("PieceWorker");
-        echo "Total Piece Workers: $count\n";
+        echo "Total Piece Workers: " . $this->countEmployee(PieceWorker::class) . "\n";
     }
 
     public function displayAllPayrolls()
