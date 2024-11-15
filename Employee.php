@@ -12,6 +12,11 @@ abstract class Employee extends Person
         $this->company = $company;
     }
 
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
     abstract public function earning();
 
     public function __toString()
