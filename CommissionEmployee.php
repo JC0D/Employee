@@ -17,7 +17,7 @@ class CommissionEmployee extends Employee
 
     public function earning()
     {
-        return $this->salary + ($this->totalSales * $this->commissionRate);
+        return $this->salary + $this->totalSales * $this->commissionRate;
     }
 
     public function __toString()
